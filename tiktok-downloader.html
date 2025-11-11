@@ -1,0 +1,2289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>TinyTap.ink - Free TikTok Video Downloader | Download TikTok Without Watermark</title>
+    <meta name="title" content="TinyTap.ink - Free TikTok Video Downloader | Download TikTok Without Watermark">
+    <meta name="description" content="Download TikTok videos instantly without watermark. Free online TikTok downloader for high-quality video downloads. No signup required!">
+    <meta name="keywords" content="TikTok downloader, download TikTok, TikTok video downloader, no watermark, free TikTok download, save TikTok video">
+    <meta name="author" content="TinyTap.ink">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #4CA1AF, #2C3E50);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2C3E50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #777;
+            font-size: 1.1em;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], input[type="url"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="url"]:focus {
+            border-color: #4CA1AF;
+            outline: none;
+        }
+
+        .button {
+            background: #4CA1AF;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .button:hover {
+            background: #2C3E50;
+            transform: translateY(-2px);
+        }
+
+        .button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .video-preview {
+            display: none;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(76, 161, 175, 0.1);
+            border-radius: 12px;
+            border-left: 4px solid #4CA1AF;
+        }
+
+        .video-preview.show {
+            display: block;
+        }
+
+        .video-info {
+            margin-bottom: 15px;
+        }
+
+        .video-info h3 {
+            color: #2C3E50;
+            margin-bottom: 10px;
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .download-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .download-btn {
+            background: #27ae60;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background: #229954;
+            transform: translateY(-2px);
+        }
+
+        .login-section {
+            text-align: center;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0,0,0,0.03);
+            padding: 6px 10px;
+            border-radius: 999px;
+        }
+
+        .user-info img {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info .name {
+            font-weight: 600;
+            color: #2C3E50;
+        }
+
+        .history {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .history.visible {
+            display: block;
+        }
+
+        .history-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .history-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            background: white;
+        }
+
+        .history-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+        }
+
+        .history-item .video-title {
+            font-size: 12px;
+            color: #555;
+            margin: 8px 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animated {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4CA1AF;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            display: none;
+            background: rgba(231, 76, 60, 0.1);
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            border-radius: 8px;
+            color: #c0392b;
+            margin: 15px 0;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Login Page Styles */
+        .login-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #4CA1AF, #2C3E50);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-page.show {
+            display: flex;
+        }
+
+        .login-container {
+            width: 90%;
+            max-width: 450px;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            color: #2C3E50;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .login-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 14px 20px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            color: #2C3E50;
+        }
+
+        .login-btn:hover {
+            border-color: #4CA1AF;
+            background: rgba(76, 161, 175, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .login-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .login-btn.discord {
+            border-color: #5865F2;
+            background: #5865F2;
+            color: white;
+        }
+
+        .login-btn.discord:hover {
+            background: #4752C4;
+            border-color: #4752C4;
+        }
+
+        .captcha-container {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .captcha-container.show {
+            display: block;
+        }
+
+        .verification-info {
+            background: rgba(76, 161, 175, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4CA1AF;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .skip-login {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .skip-login button {
+            background: none;
+            border: none;
+            color: #4CA1AF;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: underline;
+        }
+
+        .skip-login button:hover {
+            color: #2C3E50;
+        }
+
+        .login-loading {
+            display: none;
+            text-align: center;
+            color: #4CA1AF;
+            font-weight: 500;
+            margin-top: 15px;
+        }
+
+        .login-loading.show {
+            display: block;
+        }
+
+        .premium-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .feature-list {
+            background: rgba(76, 161, 175, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .feature-list h3 {
+            color: #2C3E50;
+            margin-bottom: 15px;
+        }
+
+        .feature-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .premium-feature {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .premium-feature.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #555;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            color: #4CA1AF;
+        }
+
+        .tab.active {
+            color: #4CA1AF;
+            border-bottom-color: #4CA1AF;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .search-result-card {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-result-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+            border-color: #4CA1AF;
+        }
+
+        .search-result-thumbnail {
+            width: 180px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .search-result-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .search-result-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2C3E50;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .search-result-channel {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .search-result-meta {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .drag-drop-zone {
+            border: 3px dashed #4CA1AF;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(76, 161, 175, 0.05), rgba(44, 62, 80, 0.05));
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .drag-drop-zone:hover {
+            border-color: #2C3E50;
+            background: linear-gradient(135deg, rgba(76, 161, 175, 0.1), rgba(44, 62, 80, 0.1));
+            transform: scale(1.02);
+        }
+
+        .drag-drop-zone.dragover {
+            border-color: #27ae60;
+            background: rgba(39, 174, 96, 0.1);
+            transform: scale(1.05);
+        }
+
+        .drag-drop-zone h3 {
+            color: #2C3E50;
+            margin: 20px 0 10px 0;
+            font-size: 24px;
+        }
+
+        .drag-drop-zone p {
+            color: #666;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        .upload-settings {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .upload-settings select {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .file-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .file-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2C3E50;
+            margin-bottom: 5px;
+        }
+
+        .file-meta {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .file-link {
+            background: #f0f0f0;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            color: #4CA1AF;
+            font-weight: bold;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+
+        .copy-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #229954;
+            transform: scale(1.05);
+        }
+
+        .premium-gate {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div class="login-page" id="loginPage">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>🎵 Sign in to TinyTap.ink</h1>
+                <p>Access premium download features with Discord</p>
+            </div>
+
+            <!-- Discord Login Button -->
+            <div class="login-buttons" id="loginButtons">
+                <button class="login-btn discord" onclick="loginWithDiscord()">
+                    <svg width="24" height="24" viewBox="0 0 71 55" fill="none">
+                        <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978ZM23.7259 37.3253C20.2276 37.3253 17.3451 34.1136 17.3451 30.1693C17.3451 26.225 20.1717 23.0133 23.7259 23.0133C27.308 23.0133 30.1626 26.2532 30.1066 30.1693C30.1066 34.1136 27.28 37.3253 23.7259 37.3253ZM47.3178 37.3253C43.8196 37.3253 40.9371 34.1136 40.9371 30.1693C40.9371 26.225 43.7636 23.0133 47.3178 23.0133C50.9 23.0133 53.7545 26.2532 53.6986 30.1693C53.6986 34.1136 50.9 37.3253 47.3178 37.3253Z" fill="white"/>
+                    </svg>
+                    Sign in with Discord
+                </button>
+            </div>
+
+            <!-- Server Join Message -->
+            <div id="serverJoinMessage" style="display: none; margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 8px; text-align: center;">
+                <p style="color: #e74c3c; font-weight: 600; margin-bottom: 10px;">⚠️ You need to join the Discord server first!</p>
+                <a href="https://discord.gg/VJSbxYNfwS" target="_blank" class="button" style="display: inline-block;">Join Discord Server</a>
+            </div>
+
+            <!-- Verification Code Input -->
+            <div id="verificationSection" style="display: none; margin-top: 20px;">
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <p style="color: #27ae60; font-weight: 600;">✅ Check your Discord DMs!</p>
+                    <p style="font-size: 14px; color: #666; margin-top: 5px;">Enter the 10-digit code we sent you</p>
+                    <p style="font-size: 12px; color: #e74c3c; margin-top: 10px;">⚠️ Warning: If you refresh, the timer will restart!</p>
+                </div>
+                <input type="text" id="verificationCode" placeholder="Enter 10-digit code" maxlength="10" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 18px; text-align: center; letter-spacing: 3px;" />
+                <button onclick="verifyCode()" class="button" style="width: 100%; margin-top: 15px;">Verify Code</button>
+                <button onclick="resendCode()" class="button" style="width: 100%; margin-top: 10px; background: #9b59b6;">Resend Code</button>
+                <p id="attemptCount" style="text-align: center; margin-top: 10px; font-size: 14px; color: #e74c3c;"></p>
+            </div>
+
+            <!-- Blocked Message -->
+            <div id="blockedMessage" style="display: none; margin-top: 20px; padding: 20px; background: #ffe6e6; border-radius: 8px; text-align: center;">
+                <p style="color: #e74c3c; font-weight: 600; font-size: 18px;">🚫 Account Blocked</p>
+                <p style="margin-top: 10px; color: #666;">Too many failed attempts.</p>
+                <p id="blockTimer" style="margin-top: 10px; font-size: 16px; font-weight: 600; color: #e74c3c;"></p>
+            </div>
+
+            <div class="login-loading" id="loginLoading">
+                <div class="spinner"></div>
+                <p>Connecting to Discord...</p>
+            </div>
+
+            <div class="skip-login">
+                <button onclick="skipLogin()" style="font-size: 14px; color: #4CA1AF;">
+                    Continue as guest (limited features)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container animated">
+        <div class="header">
+            <h1>🎵 TinyTap.ink Toolkit</h1>
+            <p>Download TikTok & YouTube videos, Generate QR Codes</p>
+        </div>
+
+        <div class="login-section">
+            <button class="button" id="backToLoginBtn" onclick="showLoginPage()" style="display:block;">Go Back to Login</button>
+            <div id="g_id_signin" style="display:none;"></div>
+            <div id="userInfo" class="user-info" style="display:none;">
+                <img id="userPic" src="" alt="avatar" />
+                <div>
+                    <div class="name" id="userName"></div>
+                </div>
+                <button class="button" id="signOutBtn" style="padding:6px 10px;">Sign out</button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('tiktok')">TikTok</button>
+            <button class="tab" onclick="switchTab('youtube')">YouTube</button>
+            <button class="tab premium-feature" onclick="switchTab('filehost')">📤 File Hosting</button>
+        </div>
+
+        <!-- TikTok Tab -->
+        <div id="tiktokTab" class="tab-content active">
+            <div class="input-group">
+                <input type="url" id="tiktokUrl" placeholder="Paste TikTok video URL here (e.g., https://www.tiktok.com/@user/video/...)" />
+            </div>
+
+            <div class="input-group">
+                <button class="button" id="downloadBtnTiktok" onclick="processTikTok()">Download TikTok Video</button>
+            </div>
+
+            <div class="loading" id="loadingIndicatorTiktok">
+                <div class="spinner"></div>
+                <p>Processing video...</p>
+            </div>
+
+            <div class="error-message" id="errorMessageTiktok"></div>
+
+            <div class="video-preview" id="videoPreviewTiktok">
+                <div class="video-info">
+                    <h3 id="videoTitleTiktok">Video Title</h3>
+                    <img id="videoThumbnailTiktok" class="video-thumbnail" src="" alt="Video thumbnail" />
+                    <p><strong>Author:</strong> <span id="videoAuthorTiktok"></span></p>
+                    <p><strong>Type:</strong> <span id="videoTypeTiktok"></span></p>
+                </div>
+                <div class="download-options" id="downloadOptionsTiktok"></div>
+            </div>
+
+            <div class="feature-list">
+                <h3>TikTok Features</h3>
+                <ul>
+                    <li>Download videos without watermark</li>
+                    <li>High-quality video downloads</li>
+                    <li>Support for all video types (regular, slideshow, etc.)</li>
+                    <li><span class="premium-feature" id="historyFeature">Download history tracking <span class="premium-badge">Premium</span></span></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- YouTube Tab -->
+        <div id="youtubeTab" class="tab-content">
+            <div class="input-group">
+                <input type="text" id="youtubeUrl" placeholder="Paste YouTube URL or search for a video..." />
+            </div>
+
+            <div class="input-group" style="display: flex; gap: 10px;">
+                <button class="button" id="searchBtnYoutube" onclick="searchYouTube()" style="flex: 1; background: #9b59b6;">Search Videos</button>
+                <button class="button" id="downloadBtnYoutube" onclick="processYouTube()" style="flex: 1;">Download Video</button>
+            </div>
+
+            <div class="loading" id="loadingIndicatorYoutube">
+                <div class="spinner"></div>
+                <p>Processing...</p>
+            </div>
+
+            <!-- Search Results -->
+            <div id="searchResults" style="display: none; margin-top: 20px;">
+                <h3 style="color: #2C3E50; margin-bottom: 15px;">Search Results:</h3>
+                <div id="searchResultsContainer" style="display: grid; gap: 15px;"></div>
+            </div>
+
+            <div class="error-message" id="errorMessageYoutube"></div>
+
+            <div class="video-preview" id="videoPreviewYoutube">
+                <div class="video-info">
+                    <h3 id="videoTitleYoutube">Video Title</h3>
+                    <img id="videoThumbnailYoutube" class="video-thumbnail" src="" alt="Video thumbnail" />
+                    <p><strong>Channel:</strong> <span id="videoAuthorYoutube"></span></p>
+                    <p><strong>Duration:</strong> <span id="videoDurationYoutube"></span></p>
+                </div>
+                <div class="download-options" id="downloadOptionsYoutube"></div>
+            </div>
+
+            <div class="feature-list">
+                <h3>YouTube Features</h3>
+                <ul>
+                    <li>Download videos in multiple qualities</li>
+                    <li>HD video support (up to 1080p)</li>
+                    <li>Audio-only downloads (MP3)</li>
+                    <li><span class="premium-feature" id="historyFeatureYT">Download history tracking <span class="premium-badge">Premium</span></span></li>
+                </ul>
+            </div>
+        </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- File Hosting Tab -->
+        <div id="filehostTab" class="tab-content">
+            <div class="premium-gate" id="fileHostGate" style="display: none;">
+                <div style="text-align: center; padding: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white;">
+                    <h2 style="margin-bottom: 15px;">🔒 Premium Feature</h2>
+                    <p style="margin-bottom: 20px;">File hosting is available for premium users only!</p>
+                    <button class="button" onclick="showLoginPage()" style="background: white; color: #667eea;">Sign In to Unlock</button>
+                </div>
+            </div>
+
+            <div id="fileHostContent" style="display: none;">
+                <h2 style="color: #2C3E50; margin-bottom: 20px;">📤 File Hosting</h2>
+                <p style="color: #666; margin-bottom: 30px;">Upload files up to 5GB and share them with a custom link!</p>
+
+                <!-- Drag & Drop Zone -->
+                <div class="drag-drop-zone" id="dragDropZone">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#4CA1AF" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <h3>Drag & Drop Files Here</h3>
+                    <p>or</p>
+                    <button class="button" onclick="document.getElementById('fileInput').click()">Choose Files</button>
+                    <input type="file" id="fileInput" style="display: none;" multiple />
+                    <p style="margin-top: 15px; font-size: 12px; color: #999;">Maximum file size: 5GB per file</p>
+                </div>
+
+                <!-- Upload Settings -->
+                <div class="upload-settings" id="uploadSettings" style="display: none; margin-top: 30px;">
+                    <h3 style="color: #2C3E50; margin-bottom: 15px;">Upload Settings</h3>
+                    
+                    <div class="input-group">
+                        <label style="display: block; margin-bottom: 8px; color: #555; font-weight: 500;">Custom Link Name (optional)</label>
+                        <input type="text" id="customLinkName" placeholder="e.g., my-file (leave empty for random)" />
+                        <p style="font-size: 12px; color: #999; margin-top: 5px;">Your link will be: tinytap.ink/<strong id="linkPreview">random</strong></p>
+                    </div>
+
+                    <div class="input-group">
+                        <label style="display: block; margin-bottom: 8px; color: #555; font-weight: 500;">Link Expiration</label>
+                        <select id="expirationTime" class="button" style="width: 100%; text-align: left;">
+                            <option value="2">2 hours</option>
+                            <option value="6">6 hours</option>
+                            <option value="24">1 day</option>
+                            <option value="72">3 days</option>
+                            <option value="120" selected>5 days</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <button class="button" onclick="uploadFiles()" id="uploadBtn">Upload Files</button>
+                    </div>
+                </div>
+
+                <!-- Upload Progress -->
+                <div class="loading" id="uploadProgress">
+                    <div class="spinner"></div>
+                    <p id="uploadStatus">Uploading...</p>
+                    <div style="width: 100%; background: #ddd; border-radius: 10px; margin-top: 10px; height: 20px; overflow: hidden;">
+                        <div id="progressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #4CA1AF, #2C3E50); transition: width 0.3s;"></div>
+                    </div>
+                    <p id="progressText" style="margin-top: 5px; font-size: 14px;">0%</p>
+                </div>
+
+                <!-- Uploaded Files List -->
+                <div id="uploadedFilesList" style="display: none; margin-top: 30px;">
+                    <h3 style="color: #2C3E50; margin-bottom: 15px;">📁 Your Uploaded Files</h3>
+                    <div id="filesList"></div>
+                </div>
+            </div>
+
+            <div class="feature-list" style="margin-top: 30px;">
+                <h3>File Hosting Features</h3>
+                <ul>
+                    <li>✨ Upload files up to 5GB</li>
+                    <li>🎯 Custom link names (e.g., tinytap.ink/myfile)</li>
+                    <li>⏰ Automatic expiration (2 hours to 5 days)</li>
+                    <li>� QR codes for easy sharing</li>
+                    <li>�📊 Track all your uploads</li>
+                    <li>🚀 Fast CDN delivery</li>
+                    <li>🔒 Secure file storage</li>
+                    <li><span class="premium-feature">Premium users only <span class="premium-badge">Premium</span></span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="history" id="historySection">
+            <h3>Your Download History</h3>
+            <div class="history-items" id="historyItems"></div>
+        </div>
+    </div>
+
+    <!-- SEO Content Section -->
+    <div class="container animated" style="margin-top: 20px;">
+        <article>
+            <h2 style="color: #2C3E50; margin-bottom: 15px;">Free TikTok & YouTube Downloader + QR Code Generator - TinyTap.ink</h2>
+            <p style="line-height: 1.6; color: #555; margin-bottom: 15px;">
+                Download TikTok and YouTube videos instantly, and generate custom QR codes with <strong>TinyTap.ink</strong>, the best free online toolkit. 
+                Save your favorite videos from TikTok without watermark, YouTube in HD quality, and create beautiful QR codes. No app installation or registration required!
+            </p>
+            
+            <h3 style="color: #2C3E50; margin: 20px 0 10px 0;">Why Choose TinyTap.ink Toolkit?</h3>
+            <ul style="line-height: 1.8; color: #555; padding-left: 20px;">
+                <li><strong>100% Free:</strong> Download unlimited videos and generate QR codes at no cost</li>
+                <li><strong>No Watermark:</strong> Get clean TikTok videos without watermarks</li>
+                <li><strong>HD Quality:</strong> Download YouTube videos up to 1080p HD</li>
+                <li><strong>QR Code Generator:</strong> Create custom QR codes instantly</li>
+                <li><strong>Fast & Easy:</strong> Simple one-click process for all tools</li>
+                <li><strong>All Formats:</strong> Support for videos, audio, photos, and slideshows</li>
+                <li><strong>Audio Downloads:</strong> Extract MP3 audio from YouTube videos</li>
+                <li><strong>No Login Required:</strong> Start using tools immediately (login for premium features)</li>
+            </ul>
+            
+            <h3 style="color: #2C3E50; margin: 20px 0 10px 0;">How to Download TikTok Videos</h3>
+            <ol style="line-height: 1.8; color: #555; padding-left: 20px; margin-bottom: 15px;">
+                <li>Copy the TikTok video URL from the TikTok app or website</li>
+                <li>Select the "TikTok" tab and paste the URL into the input field</li>
+                <li>Click "Download TikTok Video" and wait for processing</li>
+                <li>Choose your preferred quality and click download</li>
+            </ol>
+
+            <h3 style="color: #2C3E50; margin: 20px 0 10px 0;">How to Download YouTube Videos</h3>
+            <ol style="line-height: 1.8; color: #555; padding-left: 20px; margin-bottom: 15px;">
+                <li>Copy the YouTube video URL from your browser</li>
+                <li>Select the "YouTube" tab and paste the URL into the input field</li>
+                <li>Click "Download YouTube Video" and wait for processing</li>
+                <li>Choose video quality (HD/SD) or audio format (MP3) and download</li>
+            </ol>
+
+            <h3 style="color: #2C3E50; margin: 20px 0 10px 0;">How to Generate QR Codes</h3>
+            <ol style="line-height: 1.8; color: #555; padding-left: 20px; margin-bottom: 15px;">
+                <li>Select the "QR Code" tab</li>
+                <li>Enter any URL or text you want to convert to a QR code</li>
+                <li>Click "Generate QR Code" to create your custom QR code</li>
+                <li>Download the QR code image and use it anywhere</li>
+            </ol>
+            
+            <footer style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #777; font-size: 0.9em;">
+                <p>&copy; 2025 TinyTap.ink - Free TikTok & YouTube Downloader + QR Code Generator</p>
+                <p style="margin-top: 8px;">Keywords: TikTok downloader, YouTube downloader, QR code generator, download TikTok video, download YouTube video, TikTok no watermark, YouTube to MP3, save TikTok, YouTube HD download, create QR code, free QR generator</p>
+            </footer>
+        </article>
+    </div>
+
+    <script>
+        let isLoggedIn = false;
+        let userHistory = [];
+        let currentUserId = null;
+        let pendingAuth = null;
+        let hcaptchaToken = null;
+        let currentVideoData = null;
+
+        // Initialize
+        window.onload = function() {
+            const isAlreadyLoggedIn = checkSavedLogin();
+            
+            if (!isAlreadyLoggedIn) {
+                showLoginPage();
+            }
+
+            document.getElementById('signOutBtn').addEventListener('click', signOut);
+
+            // Check for OAuth callback
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('auth') === 'discord') {
+                handleDiscordCallback();
+            }
+
+            // Initialize hCaptcha
+            if (typeof hcaptcha !== 'undefined') {
+                hcaptcha.render('hcaptcha', {
+                    sitekey: '1e3cc93a-233c-4922-a890-72e2081c6d5c',
+                    callback: onCaptchaSuccess,
+                    'expired-callback': onCaptchaExpired,
+                    'error-callback': onCaptchaError
+                });
+            }
+
+            // Enter key support
+            document.getElementById('tiktokUrl').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    processTikTok();
+                }
+            });
+        }
+
+        function showLoginPage() {
+            document.getElementById('loginPage').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideLoginPage() {
+            document.getElementById('loginPage').classList.remove('show');
+            document.body.style.overflow = 'auto';
+            
+            const msgDiv = document.querySelector('.captcha-success-msg');
+            if (msgDiv) msgDiv.remove();
+            document.getElementById('loginButtons').style.display = 'flex';
+            document.getElementById('captchaContainer').classList.remove('show');
+            pendingAuth = null;
+            hcaptchaToken = null;
+        }
+
+        function skipLogin() {
+            hideLoginPage();
+        }
+
+        // Discord OAuth Functions
+        let discordUserId = null;
+        let blockTimer = null;
+
+        function loginWithDiscord() {
+            document.getElementById('loginLoading').classList.add('show');
+            window.location.href = 'http://localhost:3001/auth/discord';
+        }
+
+        async function handleDiscordCallback() {
+            document.getElementById('loginLoading').classList.add('show');
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            
+            if (!code) {
+                alert('Authentication failed. Please try again.');
+                window.location.href = window.location.pathname;
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3001/auth/discord/callback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.requiresVerification) {
+                        discordUserId = data.userId;
+                        document.getElementById('loginLoading').classList.remove('show');
+                        document.getElementById('verificationSection').style.display = 'block';
+                        document.getElementById('attemptCount').textContent = `Attempts: 0/10`;
+                    } else {
+                        completeLogin({
+                            provider: 'discord',
+                            id: data.user.id,
+                            name: data.user.username,
+                            picture: `https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.png`,
+                            email: data.user.email || ''
+                        });
+                    }
+                } else {
+                    document.getElementById('loginLoading').classList.remove('show');
+                    if (data.message === 'Not in server') {
+                        document.getElementById('serverJoinMessage').style.display = 'block';
+                    } else {
+                        alert(data.message || 'Login failed. Please try again.');
+                    }
+                }
+                
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } catch (error) {
+                console.error('Discord auth error:', error);
+                alert('Authentication error. Please check if the auth server is running.');
+                window.location.href = window.location.pathname;
+            }
+        }
+
+        async function verifyCode() {
+            const code = document.getElementById('verificationCode').value.trim();
+            
+            if (code.length !== 10 || !/^\d+$/.test(code)) {
+                alert('Please enter a valid 10-digit code');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3001/auth/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: discordUserId, code })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    completeLogin({
+                        provider: 'discord',
+                        id: data.user.id,
+                        name: data.user.username,
+                        picture: `https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.png`,
+                        email: data.user.email || ''
+                    });
+                } else {
+                    if (data.blocked) {
+                        showBlockedMessage(data.blockedUntil);
+                    } else {
+                        document.getElementById('attemptCount').textContent = `Attempts: ${data.attempts}/10`;
+                        alert(data.message || 'Invalid code. Please try again.');
+                        document.getElementById('verificationCode').value = '';
+                    }
+                }
+            } catch (error) {
+                console.error('Verification error:', error);
+                alert('Verification failed. Please try again.');
+            }
+        }
+
+        async function resendCode() {
+            try {
+                const response = await fetch('http://localhost:3001/auth/resend', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: discordUserId })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('New code sent! Check your Discord DMs.');
+                    document.getElementById('verificationCode').value = '';
+                    document.getElementById('attemptCount').textContent = `Attempts: 0/10`;
+                } else {
+                    if (data.blocked) {
+                        showBlockedMessage(data.blockedUntil);
+                    } else {
+                        alert(data.message || 'Failed to resend code.');
+                    }
+                }
+            } catch (error) {
+                console.error('Resend error:', error);
+                alert('Failed to resend code. Please try again.');
+            }
+        }
+
+        function showBlockedMessage(blockedUntil) {
+            document.getElementById('verificationSection').style.display = 'none';
+            document.getElementById('blockedMessage').style.display = 'block';
+            
+            const endTime = new Date(blockedUntil).getTime();
+            
+            if (blockTimer) clearInterval(blockTimer);
+            
+            blockTimer = setInterval(() => {
+                const now = Date.now();
+                const remaining = endTime - now;
+                
+                if (remaining <= 0) {
+                    clearInterval(blockTimer);
+                    window.location.reload();
+                } else {
+                    const minutes = Math.floor(remaining / 60000);
+                    const seconds = Math.floor((remaining % 60000) / 1000);
+                    document.getElementById('blockTimer').textContent = 
+                        `Unblocked in: ${minutes}m ${seconds}s`;
+                }
+            }, 1000);
+        }
+
+        function completeLogin(userData) {
+            isLoggedIn = true;
+            currentUserId = userData.id;
+
+            document.getElementById('userName').textContent = userData.name;
+            document.getElementById('userPic').src = userData.picture || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%234CA1AF"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>';
+            document.getElementById('userInfo').style.display = 'flex';
+
+            // Enable premium features
+            document.querySelectorAll('.premium-feature').forEach(el => {
+                el.classList.add('active');
+            });
+
+            loadHistory();
+            document.getElementById('historySection').classList.add('visible');
+
+            hideLoginPage();
+
+            localStorage.setItem('userAuth', JSON.stringify({
+                provider: userData.provider,
+                id: userData.id,
+                name: userData.name,
+                picture: userData.picture,
+                timestamp: Date.now()
+            }));
+            
+            // Clean up verification UI
+            document.getElementById('verificationSection').style.display = 'none';
+            document.getElementById('verificationCode').value = '';
+            discordUserId = null;
+        }
+
+
+
+        function checkSavedLogin() {
+            const savedAuth = localStorage.getItem('userAuth');
+            if (savedAuth) {
+                const userData = JSON.parse(savedAuth);
+                const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+                if (Date.now() - userData.timestamp < thirtyDays) {
+                    completeLogin(userData);
+                    return true;
+                } else {
+                    localStorage.removeItem('userAuth');
+                }
+            }
+            return false;
+        }
+
+        function signOut() {
+            document.getElementById('userInfo').style.display = 'none';
+            document.getElementById('g_id_signin').style.display = 'none';
+            document.getElementById('backToLoginBtn').style.display = 'block';
+            isLoggedIn = false;
+            currentUserId = null;
+
+            document.querySelectorAll('.premium-feature').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            userHistory = [];
+            document.getElementById('historyItems').innerHTML = '';
+            document.getElementById('historySection').classList.remove('visible');
+            
+            localStorage.removeItem('userAuth');
+            hcaptchaToken = null;
+            pendingAuth = null;
+            
+            if (typeof hcaptcha !== 'undefined') {
+                hcaptcha.reset();
+            }
+        }
+
+        function getHistoryKey() {
+            return currentUserId ? `tiktokHistory_${currentUserId}` : 'tiktokHistory_guest';
+        }
+
+        function loadHistory() {
+            const saved = localStorage.getItem(getHistoryKey());
+            if (saved) {
+                userHistory = JSON.parse(saved);
+                displayHistory();
+            }
+        }
+
+        function displayHistory() {
+            const historyContainer = document.getElementById('historyItems');
+            historyContainer.innerHTML = '';
+
+            userHistory.forEach((item, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item animated';
+                historyItem.innerHTML = `
+                    <img src="${item.thumbnail}" alt="Video thumbnail" />
+                    <div class="video-title">${item.title || 'TikTok Video'}</div>
+                    <div style="margin-top:8px; display:flex; gap:8px; justify-content:center;">
+                        <button class="download-btn" onclick="redownload(${index})" style="font-size: 12px; padding: 6px 12px;">Download</button>
+                        <button class="button" style="background:#e74c3c; font-size: 12px; padding: 6px 12px;" onclick="deleteHistory(${index})">Delete</button>
+                    </div>
+                `;
+                historyContainer.appendChild(historyItem);
+            });
+        }
+
+        function saveHistory() {
+            localStorage.setItem(getHistoryKey(), JSON.stringify(userHistory));
+        }
+
+        function deleteHistory(index) {
+            userHistory.splice(index, 1);
+            saveHistory();
+            displayHistory();
+        }
+
+        function redownload(index) {
+            const item = userHistory[index];
+            if (item && item.downloadUrl) {
+                window.open(item.downloadUrl, '_blank');
+            }
+        }
+
+        // Tab Switching
+        function switchTab(tabName) {
+            // Check if file hosting and not logged in
+            if (tabName === 'filehost' && !isLoggedIn) {
+                showLoginPage();
+                return;
+            }
+
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.getElementById('tiktokTab').classList.remove('active');
+            document.getElementById('youtubeTab').classList.remove('active');
+            document.getElementById('filehostTab').classList.remove('active');
+
+            if (tabName === 'tiktok') {
+                document.getElementById('tiktokTab').classList.add('active');
+            } else if (tabName === 'youtube') {
+                document.getElementById('youtubeTab').classList.add('active');
+            } else if (tabName === 'filehost') {
+                document.getElementById('filehostTab').classList.add('active');
+                initFileHosting();
+            }
+        }
+
+        // TikTok Download Functions
+        async function processTikTok() {
+            let url = document.getElementById('tiktokUrl').value.trim();
+            const loadingIndicator = document.getElementById('loadingIndicatorTiktok');
+            const errorMessage = document.getElementById('errorMessageTiktok');
+            const videoPreview = document.getElementById('videoPreviewTiktok');
+            const downloadBtn = document.getElementById('downloadBtnTiktok');
+
+            // Reset UI
+            errorMessage.classList.remove('show');
+            videoPreview.classList.remove('show');
+            
+            if (!url) {
+                showError('Please enter a TikTok video URL');
+                return;
+            }
+
+            if (!isValidTikTokUrl(url)) {
+                showError('Please enter a valid TikTok URL (e.g., https://www.tiktok.com/@user/video/...)');
+                return;
+            }
+
+            // Clean the URL by removing query parameters
+            url = cleanTikTokUrl(url);
+            
+            // Update the input field with the cleaned URL
+            document.getElementById('tiktokUrl').value = url;
+
+            loadingIndicator.classList.add('show');
+            downloadBtn.disabled = true;
+
+            try {
+                // Use TiklyDown API for direct downloads
+                const apiUrl = `https://api.tiklydown.me/api/download?url=${encodeURIComponent(url)}`;
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API returned status ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.video && (data.video.no_watermark || data.video.watermark)) {
+                    // Build result object
+                    const result = {
+                        type: 'video',
+                        title: data.title || data.author?.name || 'TikTok Video',
+                        author: data.author?.unique_id || data.author?.name || 'Unknown',
+                        thumbnail: data.cover || data.thumbnail || '',
+                        data: {
+                            sources: []
+                        }
+                    };
+
+                    // Add no watermark version if available
+                    if (data.video.no_watermark) {
+                        result.data.sources.push({
+                            url: data.video.no_watermark,
+                            quality: 'HD (No Watermark)'
+                        });
+                    }
+
+                    // Add watermark version as backup
+                    if (data.video.watermark) {
+                        result.data.sources.push({
+                            url: data.video.watermark,
+                            quality: 'Standard (With Watermark)'
+                        });
+                    }
+
+                    displayVideoInfo(result, url);
+                    
+                    // Save to history if logged in
+                    if (isLoggedIn) {
+                        saveToHistory(result, url);
+                    }
+                } else if (data.images && data.images.length > 0) {
+                    // Handle slideshow/photo posts
+                    const result = {
+                        type: 'slideshow',
+                        title: data.title || data.author?.name || 'TikTok Slideshow',
+                        author: data.author?.unique_id || data.author?.name || 'Unknown',
+                        thumbnail: data.cover || data.images[0] || '',
+                        data: {
+                            images: data.images
+                        }
+                    };
+
+                    displayVideoInfo(result, url);
+                    
+                    if (isLoggedIn) {
+                        saveToHistory(result, url);
+                    }
+                } else {
+                    showError(data.message || 'Video not found or failed to process. Please try again.');
+                }
+            } catch (error) {
+                console.error('Primary API Error:', error);
+                
+                // Try alternative API method
+                try {
+                    const alternativeUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`;
+                    const altResponse = await fetch(alternativeUrl);
+                    const altData = await altResponse.json();
+
+                    if (altData.code === 0 && altData.data) {
+                        const result = {
+                            type: altData.data.images ? 'slideshow' : 'video',
+                            title: altData.data.title || 'TikTok Video',
+                            author: altData.data.author?.unique_id || 'Unknown',
+                            thumbnail: altData.data.cover || altData.data.origin_cover || '',
+                            data: {}
+                        };
+
+                        if (altData.data.images) {
+                            result.data.images = altData.data.images;
+                        } else {
+                            result.data.sources = [
+                                {
+                                    url: altData.data.play,
+                                    quality: 'HD (No Watermark)'
+                                },
+                                {
+                                    url: altData.data.wmplay,
+                                    quality: 'Standard (With Watermark)'
+                                }
+                            ];
+                        }
+
+                        displayVideoInfo(result, url);
+                        
+                        if (isLoggedIn) {
+                            saveToHistory(result, url);
+                        }
+                    } else {
+                        showError('Failed to process video with alternative API. The video might be private or unavailable.');
+                    }
+                } catch (altError) {
+                    console.error('Alternative API Error:', altError);
+                    showError('Unable to download this video. It may be private, age-restricted, or the link is invalid. Please try a different video.');
+                }
+            } finally {
+                loadingIndicator.classList.remove('show');
+                downloadBtn.disabled = false;
+            }
+        }
+
+        function isValidTikTokUrl(url) {
+            const tiktokPattern = /^https?:\/\/(www\.)?(tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)/;
+            return tiktokPattern.test(url);
+        }
+
+        function cleanTikTokUrl(url) {
+            try {
+                // Parse the URL
+                const urlObj = new URL(url);
+                // Keep only the base URL without query parameters
+                return urlObj.origin + urlObj.pathname;
+            } catch (e) {
+                // If URL parsing fails, return original
+                return url;
+            }
+        }
+
+        function displayVideoInfo(result, sourceUrl) {
+            const videoPreview = document.getElementById('videoPreviewTiktok');
+            const videoTitle = document.getElementById('videoTitleTiktok');
+            const videoThumbnail = document.getElementById('videoThumbnailTiktok');
+            const videoAuthor = document.getElementById('videoAuthorTiktok');
+            const videoType = document.getElementById('videoTypeTiktok');
+            const downloadOptions = document.getElementById('downloadOptionsTiktok');
+
+            currentVideoData = result;
+
+            videoTitle.textContent = result.title || 'TikTok Video';
+            videoThumbnail.src = result.thumbnail || '';
+            videoAuthor.textContent = result.author || 'Unknown';
+            videoType.textContent = result.type || 'video';
+
+            // Clear previous download options
+            downloadOptions.innerHTML = '';
+
+            if (result.type === 'video' && result.data && result.data.sources) {
+                result.data.sources.forEach((source, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'download-btn';
+                    btn.textContent = `Download ${source.quality || `Option ${index + 1}`}`;
+                    btn.onclick = () => downloadVideo(source.url, result.title);
+                    downloadOptions.appendChild(btn);
+                });
+            } else if (result.type === 'photo' && result.data && result.data.images) {
+                result.data.images.forEach((imageUrl, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'download-btn';
+                    btn.textContent = `Download Image ${index + 1}`;
+                    btn.onclick = () => downloadImage(imageUrl, result.title, index);
+                    downloadOptions.appendChild(btn);
+                });
+            } else if (result.type === 'slideshow' && result.data && result.data.images) {
+                // Download all button
+                const allBtn = document.createElement('button');
+                allBtn.className = 'download-btn';
+                allBtn.textContent = 'Download All Images';
+                allBtn.onclick = () => downloadAllImages(result.data.images, result.title);
+                downloadOptions.appendChild(allBtn);
+
+                // Individual images
+                result.data.images.forEach((imageUrl, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'download-btn';
+                    btn.textContent = `Image ${index + 1}`;
+                    btn.onclick = () => downloadImage(imageUrl, result.title, index);
+                    downloadOptions.appendChild(btn);
+                });
+            }
+
+            videoPreview.classList.add('show');
+        }
+
+        function downloadVideo(url, title) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${sanitizeFilename(title)}.mp4`;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function downloadImage(url, title, index) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${sanitizeFilename(title)}_${index + 1}.jpg`;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function downloadAllImages(images, title) {
+            images.forEach((url, index) => {
+                setTimeout(() => {
+                    downloadImage(url, title, index);
+                }, index * 500); // Stagger downloads
+            });
+        }
+
+        function sanitizeFilename(name) {
+            return (name || 'tiktok_video').replace(/[^a-z0-9]/gi, '_').toLowerCase().substring(0, 50);
+        }
+
+        function saveToHistory(result, sourceUrl) {
+            const historyItem = {
+                title: result.title || 'TikTok Video',
+                thumbnail: result.thumbnail || '',
+                downloadUrl: result.data?.sources?.[0]?.url || '',
+                timestamp: Date.now()
+            };
+
+            userHistory.unshift(historyItem);
+            if (userHistory.length > 20) {
+                userHistory = userHistory.slice(0, 20);
+            }
+            saveHistory();
+            displayHistory();
+        }
+
+        // YouTube Download Functions with Format Selection
+        async function processYouTube() {
+            let url = document.getElementById('youtubeUrl').value.trim();
+            const loadingIndicator = document.getElementById('loadingIndicatorYoutube');
+            const errorMessage = document.getElementById('errorMessageYoutube');
+            const videoPreview = document.getElementById('videoPreviewYoutube');
+            const downloadBtn = document.getElementById('downloadBtnYoutube');
+
+            // Reset UI
+            errorMessage.classList.remove('show');
+            videoPreview.classList.remove('show');
+            
+            if (!url) {
+                showError('Please enter a YouTube video URL', 'youtube');
+                return;
+            }
+
+            if (!isValidYouTubeUrl(url)) {
+                showError('Please enter a valid YouTube URL (e.g., https://www.youtube.com/watch?v=...)', 'youtube');
+                return;
+            }
+
+            // Clean the URL
+            url = cleanYouTubeUrl(url);
+            document.getElementById('youtubeUrl').value = url;
+
+            loadingIndicator.classList.add('show');
+            downloadBtn.disabled = true;
+
+            try {
+                // Extract video ID
+                const videoId = extractYouTubeID(url);
+                
+                if (!videoId) {
+                    showError('Invalid YouTube URL. Please check and try again.', 'youtube');
+                    return;
+                }
+
+                // Fetch video info from API
+                const videoInfo = await fetchYouTubeVideoInfo(videoId, url);
+                
+                if (videoInfo) {
+                    displayYouTubeVideoInfo(videoInfo, url, 'api');
+                    
+                    if (isLoggedIn) {
+                        saveToHistory({
+                            title: videoInfo.title || `YouTube Video (${videoId})`,
+                            thumbnail: videoInfo.thumbnail || `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+                            downloadUrl: url,
+                            timestamp: Date.now(),
+                            platform: 'youtube'
+                        }, url);
+                    }
+                } else {
+                    showError('Failed to fetch video information. Please try again.', 'youtube');
+                }
+
+            } catch (error) {
+                console.error('YouTube Error:', error);
+                showError('Unable to process this YouTube video. Please try again.', 'youtube');
+            } finally {
+                loadingIndicator.classList.remove('show');
+                downloadBtn.disabled = false;
+            }
+        }
+
+        async function fetchYouTubeVideoInfo(videoId, url) {
+            try {
+                // Use RapidAPI YouTube MP4 Downloader
+                const apiUrl = `https://youtube-mp4-downloader.p.rapidapi.com/mp4?url=${encodeURIComponent(url)}`;
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'x-rapidapi-key': '9193ac269emsh2172d246cc55c9fp185d9bjsn81bd88b3eec6',
+                        'x-rapidapi-host': 'youtube-mp4-downloader.p.rapidapi.com'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API returned status ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('API Response:', data); // Debug log
+                
+                if (!data) throw new Error('Invalid response');
+                
+                const formats = [];
+                
+                // Parse available formats from API response
+                if (data.urls && Array.isArray(data.urls)) {
+                    data.urls.forEach(item => {
+                        if (item.url) {
+                            formats.push({
+                                quality: item.quality || item.name || 'Auto',
+                                format: item.ext || 'MP4',
+                                size: item.size || '--',
+                                url: item.url,
+                                hasVideo: true,
+                                hasAudio: true
+                            });
+                        }
+                    });
+                } else if (data.download || data.link || data.url || data.download_url) {
+                    // Single URL format - try different property names
+                    const downloadUrl = data.download || data.link || data.url || data.download_url;
+                    formats.push({
+                        quality: data.quality || 'HD',
+                        format: data.type ? data.type.toUpperCase() : 'MP4',
+                        size: data.size || '--',
+                        url: downloadUrl,
+                        hasVideo: true,
+                        hasAudio: true
+                    });
+                }
+                
+                // If still no formats, create basic one
+                if (formats.length === 0) {
+                    formats.push({
+                        quality: 'Auto',
+                        format: 'MP4',
+                        size: '--',
+                        url: url, // Fallback to original URL
+                        hasVideo: true,
+                        hasAudio: true
+                    });
+                }
+
+                return {
+                    title: data.title || `YouTube Video (${videoId})`,
+                    duration: data.duration || '--:--',
+                    channel: data.channel || data.author || data.uploader || 'YouTube',
+                    thumbnail: data.thumbnail || `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+                    formats: formats,
+                    videoId: videoId,
+                    videoUrl: url
+                };
+            } catch (error) {
+                console.error('API fetch error:', error);
+                return null;
+            }
+        }
+
+        function extractYouTubeID(url) {
+            try {
+                const urlObj = new URL(url);
+                if (urlObj.hostname.includes('youtu.be')) {
+                    return urlObj.pathname.slice(1);
+                } else {
+                    return urlObj.searchParams.get('v');
+                }
+            } catch (e) {
+                return null;
+            }
+        }
+
+
+
+        function displayYouTubeVideoInfo(data, sourceUrl, apiUsed = 'api') {
+            const videoPreview = document.getElementById('videoPreviewYoutube');
+            const videoTitle = document.getElementById('videoTitleYoutube');
+            const videoThumbnail = document.getElementById('videoThumbnailYoutube');
+            const videoAuthor = document.getElementById('videoAuthorYoutube');
+            const videoDuration = document.getElementById('videoDurationYoutube');
+            const downloadOptions = document.getElementById('downloadOptionsYoutube');
+
+            videoTitle.textContent = data.title || 'YouTube Video';
+            videoThumbnail.src = data.thumbnail || `https://img.youtube.com/vi/${data.videoId}/maxresdefault.jpg`;
+            videoAuthor.textContent = data.channel || data.author || 'Unknown';
+            videoDuration.textContent = data.duration || '--:--';
+
+            // Clear previous download options
+            downloadOptions.innerHTML = '';
+
+            // Group formats by type
+            const videoFormats = data.formats ? data.formats.filter(f => f.hasVideo) : [];
+            const audioFormats = data.formats ? data.formats.filter(f => !f.hasVideo && f.hasAudio) : [];
+
+            // Add video download options
+            if (videoFormats.length > 0) {
+                const videoHeader = document.createElement('h4');
+                videoHeader.textContent = 'Video Downloads:';
+                videoHeader.style.cssText = 'color: #2C3E50; margin: 10px 0; grid-column: 1/-1;';
+                downloadOptions.appendChild(videoHeader);
+
+                videoFormats.forEach((format) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'download-btn';
+                    btn.textContent = `${format.quality} - ${format.format} (${format.size})`;
+                    btn.onclick = () => {
+                        downloadYouTubeFormat(format.url, data.title);
+                    };
+                    downloadOptions.appendChild(btn);
+                });
+            }
+
+            // Add audio download options
+            if (audioFormats.length > 0) {
+                const audioHeader = document.createElement('h4');
+                audioHeader.textContent = 'Audio Downloads:';
+                audioHeader.style.cssText = 'color: #2C3E50; margin: 20px 0 10px 0; grid-column: 1/-1;';
+                downloadOptions.appendChild(audioHeader);
+
+                audioFormats.forEach((format) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'download-btn';
+                    btn.style.background = '#e67e22';
+                    btn.textContent = `${format.quality} - ${format.format} (${format.size})`;
+                    btn.onclick = () => {
+                        downloadYouTubeFormat(format.url, data.title);
+                    };
+                    downloadOptions.appendChild(btn);
+                });
+            }
+
+            videoPreview.classList.add('show');
+        }
+
+        async function downloadYouTubeFormat(url, title) {
+            try {
+                // Get video ID from current URL
+                const youtubeUrl = document.getElementById('youtubeUrl').value;
+                const videoId = extractYouTubeID(youtubeUrl);
+                const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+                
+                // Open all in new tabs
+                window.open('https://www.youtube.com/@CoolgamerN?sub_confirmation=1', '_blank');
+                window.open('https://discord.gg/X4GR9AbaQd', '_blank');
+                window.open(url, '_blank');
+                window.open(thumbnailUrl, '_blank');
+                
+            } catch (error) {
+                console.error('Download error:', error);
+                // Fallback: just open the video URL
+                window.open(url, '_blank');
+            }
+        }
+
+        function downloadYouTubeFile(url, title, extension) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${sanitizeFilename(title)}.${extension}`;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function isValidYouTubeUrl(url) {
+            const youtubePattern = /^https?:\/\/(www\.)?(youtube\.com\/(watch\?v=|shorts\/)|youtu\.be\/)/;
+            return youtubePattern.test(url);
+        }
+
+        function cleanYouTubeUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                
+                // Handle different YouTube URL formats
+                if (urlObj.hostname.includes('youtu.be')) {
+                    // Short URL format: https://youtu.be/VIDEO_ID
+                    return url.split('?')[0];
+                } else if (urlObj.hostname.includes('youtube.com')) {
+                    // Standard format: keep only v parameter
+                    const videoId = urlObj.searchParams.get('v');
+                    if (videoId) {
+                        return `https://www.youtube.com/watch?v=${videoId}`;
+                    }
+                }
+                
+                return url;
+            } catch (e) {
+                return url;
+            }
+        }
+
+        function formatDuration(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            
+            if (hours > 0) {
+                return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            } else {
+                return `${minutes}:${secs.toString().padStart(2, '0')}`;
+            }
+        }
+
+        // YouTube Search Function
+        async function searchYouTube() {
+            const searchQuery = document.getElementById('youtubeUrl').value.trim();
+            const loadingIndicator = document.getElementById('loadingIndicatorYoutube');
+            const searchResults = document.getElementById('searchResults');
+            const searchResultsContainer = document.getElementById('searchResultsContainer');
+            const videoPreview = document.getElementById('videoPreviewYoutube');
+            const errorMessage = document.getElementById('errorMessageYoutube');
+
+            // Reset UI
+            errorMessage.classList.remove('show');
+            videoPreview.classList.remove('show');
+            searchResults.style.display = 'none';
+
+            if (!searchQuery) {
+                showError('Please enter a search query', 'youtube');
+                return;
+            }
+
+            // If it's already a URL, process it directly
+            if (isValidYouTubeUrl(searchQuery)) {
+                processYouTube();
+                return;
+            }
+
+            loadingIndicator.classList.add('show');
+
+            try {
+                // Use YouTube Data API v3 for search
+                const apiKey = 'AIzaSyB_y0QJF5eNpTeaq59lO0LVgB4-nxpEht0'; // You'll need to replace with a valid API key
+                const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${encodeURIComponent(searchQuery)}&type=video&key=${apiKey}`;
+                
+                const response = await fetch(searchUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`API returned status ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Search results:', data);
+
+                if (data.items && data.items.length > 0) {
+                    displaySearchResults(data.items);
+                } else {
+                    showError('No videos found. Try a different search term.', 'youtube');
+                }
+
+            } catch (error) {
+                console.error('Search Error:', error);
+                showError('Search failed. Please try again.', 'youtube');
+            } finally {
+                loadingIndicator.classList.remove('show');
+            }
+        }
+
+        function displaySearchResults(items) {
+            const searchResults = document.getElementById('searchResults');
+            const searchResultsContainer = document.getElementById('searchResultsContainer');
+
+            searchResultsContainer.innerHTML = '';
+
+            items.forEach(item => {
+                if (item.id.kind === 'youtube#video') {
+                    const videoId = item.id.videoId;
+                    const snippet = item.snippet;
+                    
+                    const card = document.createElement('div');
+                    card.className = 'search-result-card';
+                    card.onclick = () => selectSearchResult(videoId);
+                    
+                    card.innerHTML = `
+                        <img src="${snippet.thumbnails.medium.url}" alt="${snippet.title}" class="search-result-thumbnail">
+                        <div class="search-result-info">
+                            <div class="search-result-title">${snippet.title}</div>
+                            <div class="search-result-channel">${snippet.channelTitle}</div>
+                            <div class="search-result-meta">${new Date(snippet.publishedAt).toLocaleDateString()}</div>
+                        </div>
+                    `;
+                    
+                    searchResultsContainer.appendChild(card);
+                }
+            });
+
+            searchResults.style.display = 'block';
+        }
+
+        function selectSearchResult(videoId) {
+            // Set the URL input to the selected video
+            const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+            document.getElementById('youtubeUrl').value = videoUrl;
+            
+            // Hide search results
+            document.getElementById('searchResults').style.display = 'none';
+            
+            // Automatically process the video
+            processYouTube();
+        }
+
+
+        // QR Code Generator for File Links
+        function generateQRForLink(url) {
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
+            window.open(qrUrl, '_blank');
+        }
+
+        function downloadQRCode(url, fileName) {
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
+            const link = document.createElement('a');
+            link.href = qrUrl;
+            link.download = `qrcode_${fileName}.png`;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Enter key support for YouTube
+        document.addEventListener('DOMContentLoaded', function() {
+            const youtubeInput = document.getElementById('youtubeUrl');
+            if (youtubeInput) {
+                youtubeInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        // Check if it's a URL or search query
+                        const value = youtubeInput.value.trim();
+                        if (isValidYouTubeUrl(value)) {
+                            processYouTube();
+                        } else {
+                            searchYouTube();
+                        }
+                    }
+                });
+            }
+
+        });
+
+        // File Hosting Functions
+        let selectedFiles = [];
+        const API_BASE = 'http://localhost:3000'; // Change to your server URL in production
+
+        function initFileHosting() {
+            if (isLoggedIn) {
+                document.getElementById('fileHostGate').style.display = 'none';
+                document.getElementById('fileHostContent').style.display = 'block';
+                loadUserFiles();
+            } else {
+                document.getElementById('fileHostGate').style.display = 'block';
+                document.getElementById('fileHostContent').style.display = 'none';
+            }
+        }
+
+        // Initialize drag and drop
+        window.addEventListener('load', function() {
+            const dropZone = document.getElementById('dragDropZone');
+            const fileInput = document.getElementById('fileInput');
+            const customLinkName = document.getElementById('customLinkName');
+
+            if (dropZone) {
+                dropZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('dragover');
+                });
+
+                dropZone.addEventListener('dragleave', () => {
+                    dropZone.classList.remove('dragover');
+                });
+
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('dragover');
+                    const files = Array.from(e.dataTransfer.files);
+                    handleFiles(files);
+                });
+            }
+
+            if (fileInput) {
+                fileInput.addEventListener('change', (e) => {
+                    const files = Array.from(e.target.files);
+                    handleFiles(files);
+                });
+            }
+
+            if (customLinkName) {
+                customLinkName.addEventListener('input', (e) => {
+                    const value = e.target.value.trim() || 'random';
+                    document.getElementById('linkPreview').textContent = value;
+                });
+            }
+        });
+
+        function handleFiles(files) {
+            if (files.length === 0) return;
+
+            // Check file sizes (5GB max per file)
+            const maxSize = 5 * 1024 * 1024 * 1024; // 5GB in bytes
+            for (let file of files) {
+                if (file.size > maxSize) {
+                    alert(`File "${file.name}" is too large! Maximum size is 5GB.`);
+                    return;
+                }
+            }
+
+            selectedFiles = files;
+            document.getElementById('uploadSettings').style.display = 'block';
+            
+            // Show file names
+            const fileNames = files.map(f => f.name).join(', ');
+            alert(`Selected ${files.length} file(s): ${fileNames}`);
+        }
+
+        async function uploadFiles() {
+            if (selectedFiles.length === 0) {
+                alert('Please select files first!');
+                return;
+            }
+
+            const customName = document.getElementById('customLinkName').value.trim();
+            const expiration = document.getElementById('expirationTime').value;
+            
+            const uploadProgress = document.getElementById('uploadProgress');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const uploadStatus = document.getElementById('uploadStatus');
+
+            uploadBtn.disabled = true;
+            uploadProgress.classList.add('show');
+
+            try {
+                for (let i = 0; i < selectedFiles.length; i++) {
+                    const file = selectedFiles[i];
+                    uploadStatus.textContent = `Uploading ${file.name}...`;
+
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('customName', customName);
+                    formData.append('expirationHours', expiration);
+                    formData.append('userId', currentUserId);
+
+                    const xhr = new XMLHttpRequest();
+                    
+                    // Track upload progress
+                    xhr.upload.addEventListener('progress', (e) => {
+                        if (e.lengthComputable) {
+                            const percent = Math.round((e.loaded / e.total) * 100);
+                            progressBar.style.width = percent + '%';
+                            progressText.textContent = percent + '%';
+                        }
+                    });
+
+                    // Upload file
+                    const response = await new Promise((resolve, reject) => {
+                        xhr.onload = () => {
+                            if (xhr.status === 200) {
+                                resolve(JSON.parse(xhr.responseText));
+                            } else {
+                                reject(new Error(xhr.responseText));
+                            }
+                        };
+                        xhr.onerror = () => reject(new Error('Upload failed'));
+                        xhr.open('POST', `${API_BASE}/upload`);
+                        xhr.send(formData);
+                    });
+
+                    // Show success
+                    displayUploadedFile(response);
+                }
+
+                // Reset
+                selectedFiles = [];
+                document.getElementById('fileInput').value = '';
+                document.getElementById('customLinkName').value = '';
+                document.getElementById('uploadSettings').style.display = 'none';
+                alert('Upload complete!');
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('Upload failed: ' + error.message);
+            } finally {
+                uploadProgress.classList.remove('show');
+                uploadBtn.disabled = false;
+                progressBar.style.width = '0%';
+                progressText.textContent = '0%';
+            }
+        }
+
+        function displayUploadedFile(fileData) {
+            const filesList = document.getElementById('filesList');
+            const uploadedFilesList = document.getElementById('uploadedFilesList');
+            
+            uploadedFilesList.style.display = 'block';
+
+            const fileCard = document.createElement('div');
+            fileCard.className = 'file-card animated';
+            
+            const expiryDate = new Date(fileData.expiresAt).toLocaleString();
+            const fileSize = formatFileSize(fileData.size);
+            
+            const fileUrl = `https://tinytap.ink/${fileData.shortCode}`;
+            
+            fileCard.innerHTML = `
+                <div class="file-info">
+                    <div class="file-name">📁 ${fileData.originalName}</div>
+                    <div class="file-meta">
+                        Size: ${fileSize} | Expires: ${expiryDate}
+                    </div>
+                    <div class="file-link">
+                        <strong>tinytap.ink/${fileData.shortCode}</strong>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div>
+                        <button class="copy-btn" onclick="copyLink('${fileData.shortCode}')">📋 Copy Link</button>
+                        <button class="button" style="margin-left: 10px; background: #9b59b6;" onclick="generateQRForLink('${fileUrl}')">📱 View QR</button>
+                    </div>
+                    <div>
+                        <button class="button" style="background: #3498db;" onclick="downloadQRCode('${fileUrl}', '${fileData.shortCode}')">⬇️ Download QR</button>
+                        <button class="button" style="margin-left: 10px; background: #e74c3c;" onclick="deleteFile('${fileData.shortCode}')">🗑️ Delete</button>
+                    </div>
+                </div>
+            `;
+            
+            filesList.insertBefore(fileCard, filesList.firstChild);
+        }
+
+        async function loadUserFiles() {
+            if (!currentUserId) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/files/${currentUserId}`);
+                const files = await response.json();
+                
+                if (files.length > 0) {
+                    document.getElementById('uploadedFilesList').style.display = 'block';
+                    document.getElementById('filesList').innerHTML = '';
+                    files.forEach(file => displayUploadedFile(file));
+                }
+            } catch (error) {
+                console.error('Error loading files:', error);
+            }
+        }
+
+        function copyLink(shortCode) {
+            const link = `https://tinytap.ink/${shortCode}`;
+            navigator.clipboard.writeText(link).then(() => {
+                alert('Link copied to clipboard!');
+            });
+        }
+
+        async function deleteFile(shortCode) {
+            if (!confirm('Are you sure you want to delete this file?')) return;
+
+            try {
+                await fetch(`${API_BASE}/file/${shortCode}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userId: currentUserId })
+                });
+                
+                alert('File deleted successfully!');
+                loadUserFiles();
+            } catch (error) {
+                console.error('Delete error:', error);
+                alert('Failed to delete file');
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>
